@@ -1,8 +1,8 @@
 LD = clang++
-EXENAME = needle-wunsch hberg
+EXENAME = need-wunsch hberg
 OBJS: Hirschberg.o NeedlemanWunsch.o
 
-.PHONY: needle-wunsch hberg OBJS
+.PHONY: need-wunsch hberg $(OBJS)
 
 need-wunsch: NeedlemanWunsch.o
 	$(LD) NeedlemanWunsch.o -o $@
