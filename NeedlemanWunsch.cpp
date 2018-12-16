@@ -79,6 +79,11 @@ int align(int** DP, char** bt, string s1, string s2, int gap) {
 
 	for (int i = 1; i <= len2; i++) {
 		for (int j = 1; j <= len1; j++) {
+			char a = s1[j - 1];
+			char b = s2[i - 1];
+			up = DP[i - 1][j] + score(i, j);
+			diag = DP[i][j - 1] + score(i, j);
+			left = DP[i - 1][j - 1] + score(i, j);
 
 			up = DP[i-1][j] + score('a', 'b');
 			diag = DP[i][j-1] + score('a', 'b');
