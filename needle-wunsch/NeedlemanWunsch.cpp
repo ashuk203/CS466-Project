@@ -4,22 +4,11 @@
 using namespace std;
 
 int main() {
-
-	double time_hirschberg, time_needleman;
-	clock_t clock_start;
-
-	clock_start = clock();
 	H();
-	time_hirschberg = (clock() - clock_start) / double(CLOCKS_PER_SEC); 
-
-	clock_start = clock();
 	NW("ab", "cd");
-	time_needleman = (clock() - clock_start) / double(CLOCKS_PER_SEC);
 
-	cout << "Compilation test 2" << endl;
-	cout << "Hirschberg duration: " << time_hirschberg << endl;
-	cout << "Hirschberg duration: " << time_needleman << endl;
-	return 0;
+	cout << "Compilation test 2" << endl; \
+		return 0;
 }
 
 //implementaiton of Hirshberg Alg.
@@ -31,6 +20,11 @@ void H() {
 //implementaiton of Needleman-Wunsch Alg.
 int NW(string s1, string s2) {
 
+	// memory and time tracking
+	unsigned long memory_usage = 0;
+	double duration;
+	clock_t clock_start = clock();
+
 	//gap penalty
 	int gap = 1;
 
@@ -40,14 +34,18 @@ int NW(string s1, string s2) {
 
 	//create DP table
 	int **DP = new int *[len2 + 1];
+	memory_usage += (DP + (len2 + 1)) - DP;
 	for (int i = 0; i <= len2; i++) {
 		DP[i] = new int[len1];
+		memory_usage += (DP[i] + len1) - DP[i];
 	}
 
 	//create backtrace table
 	char **bt = new char *[len2 + 1];
+	memory_usage += (bt + (len2 + 1)) - bt;
 	for (int i = 0; i <= len2; i++) {
 		bt[i] = new char[len1];
+		memory_usage += (bt[i] + len1) - bt[i];
 	}
 
 	init(DP, bt, len1, len2, gap);
@@ -60,6 +58,11 @@ int NW(string s1, string s2) {
 	for (int i = 0; i <= len2; i++) delete bt[i];
 	delete[] bt;
 	return alignScore;
+
+	// report time and memory stats 
+	duration = (clock() - clock_start) / double(CLOCKS_PER_SEC / 1000);
+	cout << "Needleman Time:   " << duration << "milliseconds" << endl;
+	cout << "Needleman Memory: " << memory_usage << "bytes" << endl;
 }
 
 
