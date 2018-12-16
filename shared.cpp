@@ -1,6 +1,19 @@
 #include <iostream>
 using namespace std;
 
-void sayHi() {
-  cout<<"Yes! I workkkk, Hi how are you???"<<endl;
+int score(char base1, char base2) {
+  int ascii_1 = (int) base1;
+  int ascii_2 = (int) base2;
+
+  if (ascii_1 == 45 or ascii_2 == 45) {
+    if (ascii_1 == 45 and ascii_2 == 45) {
+      return -inf;
+    }
+  }
+
+  if (ascii_1 == ascii_2) {
+    return 1;
+  }
+
+  return -1;
 }

@@ -1,7 +1,7 @@
 LD = clang++
 
 
-#Type in 'make run-needle' into command prompt
+#Type in 'make run-needle' or corresponding command into command prompt
 run-needle: need-wunsch
 	./need-wunsch
 	make clean
@@ -23,7 +23,6 @@ NeedlemanWunsch.o:
 
 Hirschberg.o:
 	$(LD) -c */Hirschberg.cpp */Hirschberg.h
-
 
 clean:
 	rm -f *.o

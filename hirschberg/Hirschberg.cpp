@@ -4,8 +4,9 @@ using namespace std;
 
 #include "../shared.cpp"
 
+
 int main() {
-  cout<<"Hello?"<<endl;
-  sayHi();
+  int ascii_test = (int) '-';
+  cout<<ascii_test<<endl;
   return 0;
 }
