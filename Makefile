@@ -1,9 +1,17 @@
 LD = clang++
-EXENAME = need-wunsch hberg
-OBJS: Hirschberg.o NeedlemanWunsch.o
 
-.PHONY: need-wunsch hberg $(OBJS)
 
+#Type in 'make run-needle' into command prompt
+run-needle: need-wunsch
+	./need-wunsch
+	make clean
+
+run-hirschberg: hberg
+	./hberg
+	make clean
+
+
+#Other rules (can ignore)...
 need-wunsch: NeedlemanWunsch.o
 	$(LD) NeedlemanWunsch.o -o $@
 
