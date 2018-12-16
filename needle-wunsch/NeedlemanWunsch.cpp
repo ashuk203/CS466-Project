@@ -1,12 +1,24 @@
+#include <ctime> 
 #include "NeedlemanWunsch.h"
 
 using namespace std;
 
 int main() {
-	H();
-	NW("ab", "cd");
 
-	cout<<"Compilation test 2"<<endl;
+	double time_hirschberg, time_needleman;
+	clock_t clock_start;
+
+	clock_start = clock();
+	H();
+	time_hirschberg = (clock() - clock_start) / double CLOCKS_PER_SEC; 
+
+	clock_start = clock();
+	NW("ab", "cd");
+	time_needleman = (clock() - clock_start) / double CLOCKS_PER_SEC;
+
+	cout << "Compilation test 2" << endl;
+	cout << "Hirschberg duration: " << time_hirschberg << endl;
+	cout << "Hirschberg duration: " << time_needleman << endl;
 	return 0;
 }
 
