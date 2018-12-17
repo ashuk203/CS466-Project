@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 using namespace std;
 
 int score(char base1, char base2) {
@@ -7,7 +8,7 @@ int score(char base1, char base2) {
 
   if (ascii_1 == 45 or ascii_2 == 45) {
     if (ascii_1 == 45 and ascii_2 == 45) {
-      return -inf;
+      return numeric_limits<int>::min();
     }
   }
 
