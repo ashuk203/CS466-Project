@@ -183,6 +183,6 @@ void hirschberg(string v, string w) {
     hirschberg_helper(v, w, recurs_backtrace, 0, 0);
 
     for (vector<pair<int, int> >::const_iterator i = recurs_backtrace.begin(); i != recurs_backtrace.end(); ++i) {
-      std::cout << i->first <<" "<<i->second << endl;
+      std::cout<<i->first <<" "<<i->second << endl;
     }
 }
