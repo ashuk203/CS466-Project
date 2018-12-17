@@ -1,19 +1,24 @@
 #include <ctime> 
 #include "NeedlemanWunsch.h"
+#include "../test_strings.h"
 
 using namespace std;
 
 int main() {
-	H();
-	NW("ab", "cd");
-
-	cout << "Compilation test 2" << endl; \
+	/*NW(V_100, V_100_P);
+  NW(V_10, V_10_P);
+  
+  NW(V_100, V_80);
+  NW(V_100, V_80_P);
+  
+  NW(V_1000, V_800);
+  NW(V_1000, V_800_P);
+  */
+  //NW(V_10000, V_10000_P);
+//  NW(V_10000, V_8000);
+  //NW(V_10000, V_8000_P);
+  NW(V_1000, V_800_P);
 		return 0;
-}
-
-//implementaiton of Hirshberg Alg.
-void H() {
-	return;
 }
 
 
@@ -36,43 +41,54 @@ int NW(string s1, string s2) {
 	string s2_align = "";
 
 	//create DP table
-	int **DP = new int *[len2 + 1];
+	int **DP = new int *[len2 + 2];
+	//cout << "DP: " << DP << endl;
 	memory_usage += (DP + (len2 + 1)) - DP;
 	for (int i = 0; i <= len2; i++) {
-		DP[i] = new int[len1];
+		DP[i] = new int[len1+1];
+	  //cout << i << " " << DP[i] << "      ";
 		memory_usage += (DP[i] + len1) - DP[i];
 	}
+	cout << endl;
 
 	//create backtrace table
-	char **bt = new char *[len2 + 1];
+	char **bt = new char *[len2 + 2];
 	memory_usage += (bt + (len2 + 1)) - bt;
 	for (int i = 0; i <= len2; i++) {
-		bt[i] = new char[len1];
+		bt[i] = new char[len1+1];
 		memory_usage += (bt[i] + len1) - bt[i];
 	}
-
+// 0x5a30430
 	init(DP, bt, len1, len2, gap);
 	int alignScore = align(DP, bt, s1, s2, s1_align, s2_align, gap);
-	reverse(s1_align);
+  /*
+  reverse(s1_align);
 	reverse(s2_align);
+  */
 
-
-	//free up memory
-	for (int i = 0; i <= len2; i++) delete DP[i];
-	delete[] DP;
-	for (int i = 0; i <= len2; i++) delete bt[i];
-	delete[] bt;
-	
 	//print alignments and score
-	cout<<s1_align<<endl;
-	cout<<s2_align<<endl;
+	//cout<<s1_align<<endl;
+	cout << s1.length() << " ... " << s2.length() << endl;
+	//cout<<s2_align<<endl;
 	cout<<"score: " << alignScore<< endl;
-	return alignScore;
-
+  
 	// report time and memory stats 
 	duration = (clock() - clock_start) / double(CLOCKS_PER_SEC / 1000);
-	cout << "Needleman Time:   " << duration << "milliseconds" << endl;
-	cout << "Needleman Memory: " << memory_usage << "bytes" << endl;
+	cout << "Needleman Time:   " << duration << " milliseconds" << endl;
+	cout << "Needleman Memory: " << memory_usage << " bytes" << endl;
+	
+	//free up memory
+	
+	for (int i=0; i < len2; i++)delete[] DP[i];
+	delete[] DP;
+	DP=0;
+
+	for(int i= 0; i < len2; i++) delete[] bt[i];
+	delete[] bt;
+	bt=0;
+	
+
+	return 0;
 }
 
 
@@ -122,29 +138,26 @@ int align(int** DP, char** bt, string s1, string s2, string & s1_align, string &
 	j--;
 	
 	int alignscore = DP[i][j];
-
+	
 	//backtrace time
-	cout<<"reaches backtrace"<<endl;
 	while (i > 0 || j > 0)
 	{
-	  cout<<"backtrace at i: "<<i<<" j: "<<j<<endl;
-	  cout<<"case is: "<< bt[i][j] <<endl;
 	  switch(bt[i][j])
 	  {
 	  case'-':
-	    s1_align += s1[j-1];
-	    s2_align += '-';
+	    s1_align = s1[j-1] + s1_align;
+	    s2_align = '-' + s2_align;
 	    j--;
 	    break;
 	  case'\\':
-	    s1_align += s1[j-1];
-	    s2_align += s2[i-1];
+	    s1_align = s1[j-1] + s1_align;
+	    s2_align = s2[i-1] + s2_align;
 	    i--;
 	    j--;
 	    break;
 	  case'|':
-	    s1_align += '-';
-	    s2_align += s2[i-1];
+	    s1_align = '-' + s1_align;
+	    s2_align = s2[i-1] + s2_align;
 	    i--;
 	    break;
 	  }
@@ -176,11 +189,4 @@ int max(int v1, int v2, int v3, char * backptr) {
 	}
 
 	return max;
-}
-
-void reverse(string& str){
-  int n = str.length();
-  for(int i = 0; i < n/2; i++){
-    swap(str[i], str[n-i-1]);
-  }
 }
