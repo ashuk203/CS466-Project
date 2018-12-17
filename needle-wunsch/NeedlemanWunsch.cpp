@@ -32,6 +32,9 @@ int NW(string s1, string s2) {
 	int len1 = s1.length();
 	int len2 = s2.length();
 
+	string s1_align = "";
+	string s2_align = "";
+
 	//create DP table
 	int **DP = new int *[len2 + 1];
 	memory_usage += (DP + (len2 + 1)) - DP;
@@ -49,7 +52,9 @@ int NW(string s1, string s2) {
 	}
 
 	init(DP, bt, len1, len2, gap);
-	int alignScore = align(DP, bt, s1, s2, gap);
+	int alignScore = align(DP, bt, s1, s2, s1_align, s2_align, gap);
+	reverse(s1_align);
+	reverse(s2_align);
 
 
 	//free up memory
@@ -57,6 +62,11 @@ int NW(string s1, string s2) {
 	delete[] DP;
 	for (int i = 0; i <= len2; i++) delete bt[i];
 	delete[] bt;
+	
+	//print alignments and score
+	cout<<s1_align<<endl;
+	cout<<s2_align<<endl;
+	cout<<"score: " << alignScore<< endl;
 	return alignScore;
 
 	// report time and memory stats 
@@ -84,10 +94,8 @@ void init(int** DP, char ** bt, int len1, int len2, int gap) {
 	}
 }
 
-int align(int** DP, char** bt, string s1, string s2, int gap) {
+int align(int** DP, char** bt, string s1, string s2, string & s1_align, string & s2_align, int gap) {
 
-
-	//@TODO implement NW align
 
 	//vars for possible moves
 	int up, diag, left;
@@ -102,9 +110,9 @@ int align(int** DP, char** bt, string s1, string s2, int gap) {
 		for ( j = 1; j <= len1; j++) {
 			char a = s1[j - 1];
 			char b = s2[i - 1];
-			up = DP[i - 1][j] + score(i, j);
-			diag = DP[i][j - 1] + score(i, j);
-			left = DP[i - 1][j - 1] + score(i, j);
+			up = DP[i - 1][j] - gap;
+			left = DP[i][j - 1] - gap;
+			diag = DP[i - 1][j - 1] + score(a,b);
 
 			DP[i][j] = max(up, diag, left, &backptr);
 			bt[i][j] = backptr;
@@ -112,21 +120,42 @@ int align(int** DP, char** bt, string s1, string s2, int gap) {
 	}
 	i--;
 	j--;
+	
+	int alignscore = DP[i][j];
 
-	/*
+	//backtrace time
+	cout<<"reaches backtrace"<<endl;
 	while (i > 0 || j > 0)
 	{
-
+	  cout<<"backtrace at i: "<<i<<" j: "<<j<<endl;
+	  cout<<"case is: "<< bt[i][j] <<endl;
+	  switch(bt[i][j])
+	  {
+	  case'-':
+	    s1_align += s1[j-1];
+	    s2_align += '-';
+	    j--;
+	    break;
+	  case'\\':
+	    s1_align += s1[j-1];
+	    s2_align += s2[i-1];
+	    i--;
+	    j--;
+	    break;
+	  case'|':
+	    s1_align += '-';
+	    s2_align += s2[i-1];
+	    i--;
+	    break;
+	  }
 	}
-	*/
 
-
-	return DP[i][j];
+	  return alignscore;
 }
 
 int score(char a, char b) {
 	//match = 1, mismatch = indel = -1
-	if (a == b) return 1;
+  	if (a == b) return 1;
 	else return -1;
 }
 
@@ -147,4 +176,11 @@ int max(int v1, int v2, int v3, char * backptr) {
 	}
 
 	return max;
+}
+
+void reverse(string& str){
+  int n = str.length();
+  for(int i = 0; i < n/2; i++){
+    swap(str[i], str[n-i-1]);
+  }
 }
