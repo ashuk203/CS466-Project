@@ -134,7 +134,6 @@ void hirschberg_helper(string v, string w, vector<pair<int, int> > backtrace, in
     int * suffix_vals = backwardHirsch(v, w.substr(mid_i));
 
 
-
     if (prefix_vals != NULL) {
         bool vals_found = true;
 
