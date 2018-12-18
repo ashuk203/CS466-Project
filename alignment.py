@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 #Class implementing Hirschberg and Needleman-Wunsch methods
 class GlobalAlignment:
@@ -288,7 +289,42 @@ class GlobalAlignment:
         return dp_table[:, j % 2]
 
 
-#Sample usage, works for any sequence
-hw2 = GlobalAlignment("ACTGTT", "GTTEEEE")
-hw2.hirschberg()
-hw2.needleman_wunsch()
+
+##############
+# Experiment #
+##############
+
+# Test strings made in string_generator.py
+V_10 =      "CAGTAACGCC";
+V_10_P =    "CGGCAACGCC";
+V_8 =       "CACAACGT";
+V_8_P =     "CACACCGT";
+
+V_100 =     "GGCGCGGGTCTTCACAAAGATCCGCTATAATTCAATTGCCACGCGACTTCGTTTCCGGCGCCCCACAGATATGGCGGGGTGACGGATCTCTGGCCTATCG"
+V_100_P =   "GGCGCTGATCTTCACAACGTTCCGCCGTAATTCAAATACCCCGCGACTTCGCTCCCGGCGCCCCATAAATATGGCTGGCTGACGGATCTCTGCACTGAGG"
+V_80 =      "GGCTGCCTGCCAAACTCGATCAACTAGCGAGCGTGCAACCCGGCGTCTCTGATGTTCATTCGAACGGCGCAGGACAGGAG"
+V_80_P =    "GGTTGCCTTCCAAACTCCATTAACGCGGGAGCGTGCCACGGGGCGTCTCTGATGCTCATTCTTACGGCGCGGGACAAGTG"
+
+
+# Set strings to align
+V, W = V_100, V_100_P
+
+# Timing algorithms
+t0 = time.perf_counter()
+align_obj = GlobalAlignment(V, W)
+t1 = time.perf_counter()
+
+align_obj.hirschberg()
+t2 = time.perf_counter()
+
+align_obj.needleman_wunsch()
+t3 = time.perf_counter()
+
+t_alignment = t1 - t0
+t_hirschberg = t2 - t1
+t_needleman = t3 - t2
+
+
+print("Time Alignment:  ", t_alignment)
+print("Time Hirschberg: ", t_hirschberg)
+print("Time Needleman:  ", t_needleman)
