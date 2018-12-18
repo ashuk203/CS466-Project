@@ -240,8 +240,6 @@ class GlobalAlignment:
                 #Use needleman-wunsch for the 2 nodes we are unsure of
                 part_needle_code = self.decode_dp_table(part_dp.T, len(v_part), len(w_part), v_part, w_part)
                 
-                #print(part_needle_code)
-                
                 step_code += part_needle_code
     
         return step_code
