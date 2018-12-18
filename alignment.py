@@ -45,7 +45,6 @@ class GlobalAlignment:
         print(dp_table.shape)
         step_code = self.decode_dp_table(dp_table, len(self.v), len(self.w))
         
-        print(step_code)
         alignments = self.steps_to_alignment(step_code)
     
         print(alignments)
@@ -53,9 +52,12 @@ class GlobalAlignment:
     
     
     def needleman_wunsch_helper(self, v=None, w=None):
+        
         if v is None or w is None:
             v = self.v
             w = self.w
+        else:
+            bprint = True
     
         rows = len(v) + 1
         columns = len(w) + 1
@@ -65,21 +67,20 @@ class GlobalAlignment:
             for i in range(rows):
                 if not (i == 0 and j == 0):
                     if i - 1 >= 0:
-                        up = dp_table[i - 1][j] + self.score(self.v[i - 1], '_')
+                        up = dp_table[i - 1][j] + self.score(v[i - 1], '_')
                     else:
                         up = float('-inf')
 
                     if j - 1 >= 0:
-                        left = dp_table[i][j - 1] + self.score(self.w[j - 1], '_')
+                        left = dp_table[i][j - 1] + self.score(w[j - 1], '_')
                     else:
                         left = float('-inf')
-                    
 
                     if i - 1 >= 0 and j - 1 >= 0:
-                        diag = dp_table[i - 1][j - 1] + self.score(self.w[j - 1], self.v[i - 1])
+                        diag = dp_table[i - 1][j - 1] + self.score(w[j - 1], v[i - 1])
                     else:
                         diag = float('-inf')
-
+                
                     dp_table[i][j] = max(up, left, diag)
         
         return dp_table
@@ -94,10 +95,12 @@ class GlobalAlignment:
         curr_j = end_j
         
         steps = ""
-    
+        
         while (curr_i != 0 or curr_j != 0):
             up_idx = curr_i - 1
             left_idx = curr_j - 1
+            
+            upscore = 0
             
             #Step 'B'elow
             if up_idx >= 0:
@@ -123,6 +126,7 @@ class GlobalAlignment:
                     curr_j -= 1
                     curr_i -= 1
                     continue
+        
             return "invalid"
         return steps
 
@@ -168,12 +172,15 @@ class GlobalAlignment:
         self.hirschberg_helper(0, 0, last_v_node, last_w_node)
 
         self.backtrace.append((last_v_node, last_w_node))
+        
+        print("The alignment")
+        
         step_code = self.encode_backtrace_hirschberg()
 
         print("Reported vertices of Hirschberg and alignment")
         print(str(len(self.backtrace)) + " reported vertices")
 
-        print(step_code)
+        #print(step_code)
         alignments = self.steps_to_alignment(step_code)
         print(alignments)
         print("score: " + str(self.score_alignment(alignments[0], alignments[1])))
@@ -207,6 +214,7 @@ class GlobalAlignment:
     #Constructs a 'step_sequence/step_code' given the reported from Hirschberg
     def encode_backtrace_hirschberg(self):
         self.backtrace.sort(key=lambda tup: tup[1])
+        print(self.backtrace[-9:])
         
         step_code = ""
     
@@ -222,14 +230,20 @@ class GlobalAlignment:
             elif curr_i - prev_i == 0:
                 step_code = step_code + "R"
             
-            #We do not know for sure the definite path, because di > 1 >=dj
+            #We do not know for sure the definite path, because di > 1 >= dj
             else:
-                v_part = self.v[prev_i:curr_i + 1]
+                #print(str(curr_i) + "; " + str(curr_j))
+                v_part = self.v[prev_i:curr_i]
                 w_part = self.w[curr_j - 1: curr_j]
-                part_dp = self.needleman_wunsch_helper(v_part, w_part)
+                part_dp = self.needleman_wunsch_helper(w_part, v_part)
+                
+                #print(v_part + " -- " + w_part)
+                #print(part_dp)
 
                 #Use needleman-wunsch for the 2 nodes we are unsure of
-                part_needle_code = self.decode_dp_table(part_dp, curr_i, len(w_part), v_part, w_part)
+                part_needle_code = self.decode_dp_table(part_dp.T, len(v_part), len(w_part), v_part, w_part)
+                
+                #print(part_needle_code)
                 
                 step_code += part_needle_code
     
