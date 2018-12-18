@@ -232,13 +232,10 @@ class GlobalAlignment:
             
             #We do not know for sure the definite path, because di > 1 >= dj
             else:
-                #print(str(curr_i) + "; " + str(curr_j))
                 v_part = self.v[prev_i:curr_i]
                 w_part = self.w[curr_j - 1: curr_j]
                 part_dp = self.needleman_wunsch_helper(w_part, v_part)
                 
-                #print(v_part + " -- " + w_part)
-                #print(part_dp)
 
                 #Use needleman-wunsch for the 2 nodes we are unsure of
                 part_needle_code = self.decode_dp_table(part_dp.T, len(v_part), len(w_part), v_part, w_part)
