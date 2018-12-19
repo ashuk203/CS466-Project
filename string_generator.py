@@ -41,6 +41,8 @@ def get_subset(V_in, percentage):
     V_out = [V[i] for i in indices]
     return V_out
 
+
+#Generating strings
 V_10 = gen_string(10)
 V_100 = gen_string(100)
 V_1000 = gen_string(1000)
@@ -82,7 +84,6 @@ V_10000 = ''.join(V_10000)
 V_10000_P = ''.join(V_10000_P)
 U_8000 = ''.join(U_8000)
 U_8000_P = ''.join(U_8000_P)
-
 
 
 
