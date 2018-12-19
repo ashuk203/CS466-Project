@@ -1,7 +1,7 @@
 import numpy as np
 import time
-import spyder_memory_profiler
-import memory_profiler
+#import spyder_memory_profiler
+#import memory_profiler
 
 #Class implementing Hirschberg and Needleman-Wunsch methods
 class GlobalAlignment:
@@ -16,6 +16,7 @@ class GlobalAlignment:
             self.w = w_inp
         
         self.backtrace = []
+        self.dp_table_hirsch = np.zeros((len(v_inp) + 1, 2))
     
     #Our scoring function
     def score(self, b1, b2):
@@ -263,56 +264,62 @@ class GlobalAlignment:
 
     #Forward direction path finder (helper for hirschberg)
     def forward_helper(self, i, j, i_prime, j_prime):
-        dp_table = np.zeros((i_prime - i + 1, 2))
+        rows = i_prime - i + 1
+        #dp_table = np.zeros((i_prime - i + 1, 2))
+        self.dp_table_hirsch[:rows, :] = np.zeros((rows, 2))
+        self.dp_table_hirsch[0][j % 2] = 0
     
         for jj in range(j, j_prime + 1):
             for ii in range(i, i_prime + 1):
                 if not (ii == i and jj == j):
                     if ii - 1 >= i:
-                        up = dp_table[ii - 1 - i][jj % 2] + self.score(self.v[ii - 1], '_')
+                        up = self.dp_table_hirsch[ii - 1 - i][jj % 2] + self.score(self.v[ii - 1], '_')
                     else:
                         up = float('-inf')
 
                     if jj - 1 >= j:
-                        left = dp_table[ii - i][(jj - 1) % 2] + self.score(self.w[jj - 1], '_')
+                        left = self.dp_table_hirsch[ii - i][(jj - 1) % 2] + self.score(self.w[jj - 1], '_')
                     else:
                         left = float('-inf')
 
                     if ii - 1 >= i and jj - 1 >= j:
-                        diag = dp_table[ii - 1 - i][(jj - 1) % 2] + self.score(self.w[jj - 1], self.v[ii - 1])
+                        diag = self.dp_table_hirsch[ii - 1 - i][(jj - 1) % 2] + self.score(self.w[jj - 1], self.v[ii - 1])
                     else:
                         diag = float('-inf')
 
-                    dp_table[ii - i][jj % 2] = max(up, left, diag)
+                    self.dp_table_hirsch[ii - i][jj % 2] = max(up, left, diag)
 
-        return dp_table[:, j_prime % 2]
+        return np.copy(self.dp_table_hirsch[:rows, j_prime % 2])
 
     #Backward direction path finder (helper for hirschberg)
     def backward_helper(self, i, j, i_prime, j_prime):
-        dp_table = np.zeros((i_prime - i + 1, 2))
+        rows = i_prime - i + 1
+        #self.dp_table_hirsch = np.zeros((i_prime - i + 1, 2))
+        self.dp_table_hirsch[:rows, :] = np.zeros((rows, 2))
+        self.dp_table_hirsch[i_prime - i][j_prime % 2] = 0
         
         for jj in range(j_prime, j - 1, -1):
             for ii in range(i_prime, i - 1, -1):
                 if not (ii == i_prime and jj == j_prime):
                     if ii + 1 <= i_prime:
-                        down = dp_table[ii - i + 1][jj % 2] + self.score(self.v[ii], '_')
+                        down = self.dp_table_hirsch[ii - i + 1][jj % 2] + self.score(self.v[ii], '_')
                     else:
                         down = float('-inf')
                         
                     if jj + 1 <= j_prime:
-                        right = dp_table[ii - i][(jj + 1) % 2] + self.score(self.w[jj], '_')
+                        right = self.dp_table_hirsch[ii - i][(jj + 1) % 2] + self.score(self.w[jj], '_')
                     else:
                         right = float('-inf')
                         
                     if ii + 1 <= i_prime and jj + 1 <= j_prime:
-                        diag = dp_table[ii - i + 1][(jj + 1) % 2] + self.score(self.v[ii], self.w[jj])
+                        diag = self.dp_table_hirsch[ii - i + 1][(jj + 1) % 2] + self.score(self.v[ii], self.w[jj])
 
                     else:
                         diag = float('-inf')
                         
-                    dp_table[ii - i][jj % 2] = max(down, right, diag)
+                    self.dp_table_hirsch[ii - i][jj % 2] = max(down, right, diag)
                     
-        return dp_table[:, j % 2]
+        return np.copy(self.dp_table_hirsch[:rows, j % 2])
 
 
 
