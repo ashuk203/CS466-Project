@@ -322,7 +322,7 @@ class GlobalAlignment:
         return np.copy(self.dp_table_hirsch[:rows, j % 2])
 
 
-
+"""
 ##############
 # Experiment #
 ##############
@@ -380,5 +380,5 @@ for i in range(3):
     t3 = time.perf_counter()
 
     memory_usage_HB[i] = t2 - t1
-    runtimes_NW[i] = t3 - t2
+    runtimes_NW[i] = t3 - t2"""
 
